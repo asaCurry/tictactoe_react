@@ -9,9 +9,9 @@ constructor(props){
   this.state= {
     xOrO: 0
   }
+
   this.toggleSymbol = this.toggleSymbol.bind(this);
   this.handleBoxPress = this.handleBoxPress.bind(this);
-
 }
 
 toggleSymbol() {
@@ -26,10 +26,14 @@ toggleSymbol() {
   }
 }
 
-handleBoxPress(e){
+handleBoxPress(){
   this.toggleSymbol();
-  this.props.boxPress();
+  this.props.nextPlayer();
+  this.props.updateBoxesArray();
+  this.props.victoryCheck();
 }
+
+
 
   render() {
     let symbol;
