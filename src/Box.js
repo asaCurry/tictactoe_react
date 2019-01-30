@@ -17,7 +17,7 @@ constructor(props){
 toggleSymbol() {
   if(this.props.playerTurn === 1){
     this.setState({
-      xOrO: 1
+      xOrO: -1
     })
   } else {
     this.setState({
@@ -33,12 +33,10 @@ handleBoxPress(){
   this.props.victoryCheck();
 }
 
-
-
   render() {
     let symbol;
 
-    if (this.state.xOrO === 1){
+    if (this.state.xOrO === -1){
       symbol = <span>X</span>
     } else if (this.state.xOrO === 2) {
       symbol = <span>O</span>

@@ -60,46 +60,46 @@ updateBoxesArray(){
 }
 victoryCheck(){
   let vicCount = this.state.rowsAndColumns
-  let playerTwoVicotry = (this.state.rowsAndColumns * 2)
 
   let rowCheck = 0;
   let columnCheck = 0;
-  let diagCheck = 0;
+  let diagCheckLeft = 0;
+  let diagCheckRight = 0;
   // row
   for(let j = 0 ; j < Math.pow(this.state.rowsAndColumns,2); j += vicCount) {
       for(let i = 0; i < vicCount; i++){
         rowCheck += this.state.boxesArray[i+j]
       }
-    if(rowCheck === 3 || rowCheck === 6){
-      console.log('victory!')
-    } else {
-      console.log('Next Player')
+    if(rowCheck === -3 || rowCheck === 6){
+      console.log('row victory!')
     }
     rowCheck = 0;
   }
   // column
-  for(let j = 0 ; j < Math.pow(this.state.rowsAndColumns,2); j += vicCount) {
-      for(let i = 0; i < vicCount; i++){
+  for(let j = 0 ; j < this.state.rowsAndColumns; j++) {
+
+      for(let i = 0; i < Math.pow(this.state.rowsAndColumns,2); i+= vicCount){
         columnCheck += this.state.boxesArray[i+j]
       }
-    if(columnCheck === 3 || columnCheck === 6){
-      console.log('victory!')
-    } else {
-      
+    if(columnCheck === -3 || columnCheck === 6){
+      console.log('column victory!')
     }
     columnCheck = 0;
   }
   // diagonal
-  for(let j = 0 ; j < Math.pow(this.state.rowsAndColumns,2); j += vicCount) {
-      for(let i = 0; i < vicCount; i++){
-        diagCheck += this.state.boxesArray[i+j]
-      }
-    if(diagCheck === 3 || diagCheck === 6){
-      console.log('victory!')
-    } else {
-
+ for(let j = 0 ; j < this.state.rowsAndColumns; j++ ) {
+    diagCheckLeft += this.state.boxesArray[(vicCount + 1) * j]
+    if(diagCheckLeft === -3 || diagCheckLeft === 6){
+      console.log('diagonal left victory!')
     }
-    diagCheck = 0;
+  }
+  // diagonal reverse
+ for(let j = (this.state.rowsAndColumns) ; j >= 1; j-- ) {
+    diagCheckRight += this.state.boxesArray[(vicCount - 1) * j]
+    console.log((vicCount - 1) * j)
+    if(diagCheckRight === -3 || diagCheckRight === 6){
+      console.log('diagonal right victory!')
+    }
   }
 }
 // functions and setup
