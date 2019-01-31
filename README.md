@@ -10,6 +10,7 @@ This is a basic tic tac toe game built in React. The spec's are as follows:
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 To run the project, navigate to the root directory and run:
+### `npm install`
 ### `npm start`
 
 Runs the app in the development mode.<br>
