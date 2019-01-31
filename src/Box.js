@@ -14,23 +14,33 @@ constructor(props){
   this.handleBoxPress = this.handleBoxPress.bind(this);
 }
 
-toggleSymbol() {
-  if(this.props.playerTurn === 1){
+componentWillReceiveProps(props){
+  const resetTrigger = this.props.resetTrigger;
+  if (props.resetTrigger !== resetTrigger) {
     this.setState({
-      xOrO: -1
-    })
-  } else {
-    this.setState({
-      xOrO: 2
+      xOrO: 0
     })
   }
 }
 
+toggleSymbol() {
+  if(this.props.playerTurn === 1 && this.state.xOrO === 0){
+    this.setState({
+      xOrO: -1
+    })
+  } else if (this.state.xOrO === 0) {
+    this.setState({
+      xOrO: 2
+    })
+  }
+
+}
+
 handleBoxPress(){
   this.toggleSymbol();
-  this.props.nextPlayer();
-  this.props.updateBoxesArray();
-  this.props.victoryCheck();
+  setTimeout(this.props.nextPlayer,100);
+  setTimeout(this.props.updateBoxesArray,200);
+  setTimeout(this.props.victoryCheck,300);
 }
 
   render() {
@@ -45,8 +55,10 @@ handleBoxPress(){
     }
 
     return (
-      <div className={"box"} id={"boxNumber"+this.props.boxIndex} onClick={this.handleBoxPress}
-        data-player={this.state.xOrO} >
+      <div className={"box"} id={"boxNumber"+this.props.boxIndex}
+        onClick={this.handleBoxPress}
+        data-player={this.state.xOrO}
+         >
         {symbol}
       </div>
     );

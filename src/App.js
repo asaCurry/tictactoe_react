@@ -9,12 +9,16 @@ class App extends Component {
 
     this.state= {
       playerTurn: 1,
-      rowsAndColumns: 3,
+      rowsAndColumns: 4,
       boxesArray: [],
-      playerVictory: null
+      resetTrigger: false,
+      playerVictory: "Let's Play!"
     }
     this.componentDidMount = this.componentDidMount.bind(this);
+    this.buildInitialArray = this.buildInitialArray.bind(this);
+    this.refreshGame = this.refreshGame.bind(this);
     this.createBoxGrid = this.createBoxGrid.bind(this);
+    this.declareVictory = this.declareVictory.bind(this);
     this.victoryCheck = this.victoryCheck.bind(this);
     this.nextPlayer = this.nextPlayer.bind(this);
     this.updateBoxesArray = this.updateBoxesArray.bind(this);
@@ -22,17 +26,30 @@ class App extends Component {
 // lifecycle
 
 componentDidMount(){
-  let totalBoxes = [];
+  this.buildInitialArray()
+}
 
+// functions
+refreshGame(){
+  this.buildInitialArray()
+  this.setState({
+    resetTrigger: !this.state.resetTrigger,
+    playerTurn: 1,
+    playerVictory: "Let's Play!"
+  })
+  console.log('reset')
+}
+
+buildInitialArray(){
+  let totalBoxes = [];
   for( let i =0; i < Math.pow(this.state.rowsAndColumns,2) ; i++){
     totalBoxes.push(0)
   }
   this.setState({
     boxesArray: totalBoxes
   })
-  console.log(this.state.boxesArray)
 }
-// functions
+
 nextPlayer(){
   if(this.state.playerTurn === 1) {
     this.setState({
@@ -43,23 +60,35 @@ nextPlayer(){
       playerTurn: 1
     })
   }
-  console.log(this.state.boxesArray)
 }
 
 updateBoxesArray(){
-  let rows = [];
-
-  for( let i =0; i < Math.pow(this.state.rowsAndColumns,2) ; i++){
-   let currBox  = document.getElementById('boxNumber'+ (i+1))
-   rows.push(parseInt(currBox.dataset.player))
- }
- this.setState({
-   boxesArray: rows
- })
-
+    let newArray = [];
+    for( let i =0; i < Math.pow(this.state.rowsAndColumns,2) ; i++){
+     let currBox  = document.getElementById('boxNumber'+ (i+1))
+     newArray.push(parseInt(currBox.dataset.player))
+   }
+   this.setState({
+     boxesArray: newArray
+   })
 }
+declareVictory(conditionCheck, declareX, declareY){
+  if(conditionCheck === declareX){
+    this.setState({
+      playerVictory: 'Player 1 wins!'
+    })
+  } else if (conditionCheck === declareY) {
+    this.setState({
+      playerVictory: 'Player 2 wins!'
+    })
+  }
+}
+
 victoryCheck(){
   let vicCount = this.state.rowsAndColumns
+
+  let playerXVic = (0 - vicCount);
+  let PlayerYVic = (2 * vicCount);
 
   let rowCheck = 0;
   let columnCheck = 0;
@@ -70,38 +99,48 @@ victoryCheck(){
       for(let i = 0; i < vicCount; i++){
         rowCheck += this.state.boxesArray[i+j]
       }
-    if(rowCheck === -3 || rowCheck === 6){
-      console.log('row victory!')
-    }
+    this.declareVictory(rowCheck,playerXVic,PlayerYVic);
     rowCheck = 0;
   }
   // column
   for(let j = 0 ; j < this.state.rowsAndColumns; j++) {
-
       for(let i = 0; i < Math.pow(this.state.rowsAndColumns,2); i+= vicCount){
         columnCheck += this.state.boxesArray[i+j]
       }
-    if(columnCheck === -3 || columnCheck === 6){
-      console.log('column victory!')
-    }
+    this.declareVictory(columnCheck,playerXVic,PlayerYVic);
     columnCheck = 0;
   }
   // diagonal
  for(let j = 0 ; j < this.state.rowsAndColumns; j++ ) {
     diagCheckLeft += this.state.boxesArray[(vicCount + 1) * j]
-    if(diagCheckLeft === -3 || diagCheckLeft === 6){
-      console.log('diagonal left victory!')
-    }
+    this.declareVictory(diagCheckLeft,playerXVic,PlayerYVic);
   }
   // diagonal reverse
  for(let j = (this.state.rowsAndColumns) ; j >= 1; j-- ) {
     diagCheckRight += this.state.boxesArray[(vicCount - 1) * j]
-    console.log((vicCount - 1) * j)
-    if(diagCheckRight === -3 || diagCheckRight === 6){
-      console.log('diagonal right victory!')
-    }
+    this.declareVictory(diagCheckRight,playerXVic,PlayerYVic);
   }
-}
+  // box check
+  for(let i = 0 ; i < Math.pow(this.state.rowsAndColumns,2); i++ ) {
+    let boxCheck = (
+      this.state.boxesArray[i]+
+      this.state.boxesArray[i + 1]+
+      this.state.boxesArray[i + vicCount]+
+      this.state.boxesArray[(i + 1) + vicCount]
+    )
+    this.declareVictory(boxCheck,playerXVic,PlayerYVic);
+   }
+
+  // corner check
+    let cornerCheck = (
+      this.state.boxesArray[0]+
+      this.state.boxesArray[(vicCount -1)]+
+      this.state.boxesArray[vicCount * (vicCount -1)]+
+      this.state.boxesArray[Math.pow(vicCount,2) - 1]
+    )
+    this.declareVictory(cornerCheck,playerXVic,PlayerYVic);
+  }
+
 // functions and setup
 
 createBoxGrid = () => {
@@ -114,7 +153,7 @@ createBoxGrid = () => {
       nextPlayer={this.nextPlayer}
       victoryCheck={this.victoryCheck}
       updateBoxesArray={this.updateBoxesArray}
-
+      resetTrigger={this.state.resetTrigger}
       />)
   }
   return <div className={"box-grid "}
@@ -128,7 +167,12 @@ createBoxGrid = () => {
 
     return (
       <div className="App">
+        <h1>{this.state.playerVictory}</h1>
+        <h2>Current Player: {this.state.playerTurn}</h2>
         {this.createBoxGrid()}
+        <div className="buttonRow">
+          <button className="resetButton" onClick={this.refreshGame}>Reset Game</button>
+        </div>
       </div>
     );
   }
