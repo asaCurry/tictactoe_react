@@ -24,23 +24,22 @@ componentWillReceiveProps(props){
 }
 
 toggleSymbol() {
+  let newSymbol = 0;
   if(this.props.playerTurn === 1 && this.state.xOrO === 0){
-    this.setState({
-      xOrO: -1
-    })
+    newSymbol = -1;
   } else if (this.state.xOrO === 0) {
-    this.setState({
-      xOrO: 2
-    })
+    newSymbol = 2;
   }
 
+  this.setState({
+    xOrO: newSymbol
+  }, () => {
+    this.props.completeTurn();
+  })
 }
 
 handleBoxPress(){
   this.toggleSymbol();
-  setTimeout(this.props.nextPlayer,100);
-  setTimeout(this.props.updateBoxesArray,200);
-  setTimeout(this.props.victoryCheck,300);
 }
 
   render() {
