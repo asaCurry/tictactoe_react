@@ -41,7 +41,7 @@ refreshGame(){
   console.log('reset')
 }
 
-completeTurn() {
+completeTurn(){
   this.setState({
     boxesArray: this.updateBoxesArray()
   }, () => {
@@ -83,9 +83,10 @@ declareVictory(conditionCheck, declareX, declareY){
   }
   return null;
 }
-
+// This function is the primary success check
 victoryCheck(){
   let vicCount = this.state.rowsAndColumns
+  let boxAndCornerCount = 4;
 
   let playerXVic = (0 - vicCount);
   let PlayerYVic = (2 * vicCount);
@@ -138,11 +139,10 @@ victoryCheck(){
       this.state.boxesArray[i + vicCount]+
       this.state.boxesArray[(i + 1) + vicCount]
     )
-    victoryStatus = this.declareVictory(boxCheck, playerXVic,PlayerYVic);
+    victoryStatus = this.declareVictory(boxCheck, (0 - boxAndCornerCount),(2 * boxAndCornerCount));
     if (victoryStatus !== null)
       return victoryStatus;
    }
-
   // corner
     let cornerCheck = (
       this.state.boxesArray[0]+
@@ -150,14 +150,12 @@ victoryCheck(){
       this.state.boxesArray[vicCount * (vicCount -1)]+
       this.state.boxesArray[Math.pow(vicCount,2) - 1]
     );
-    victoryStatus = this.declareVictory(cornerCheck, playerXVic,PlayerYVic);
+    victoryStatus = this.declareVictory(cornerCheck, (0 - boxAndCornerCount),(2 * boxAndCornerCount));
     return victoryStatus;
 
   }
 
-// functions and setup
-
-
+// setup
 
 createBoxGrid = () => {
   let grid = []
@@ -166,9 +164,6 @@ createBoxGrid = () => {
     grid.push(<Box key={i + 1}
       boxIndex={i+1}
       playerTurn={this.state.playerTurn}
-      nextPlayer={this.nextPlayer}
-      victoryCheck={this.victoryCheck}
-      updateBoxesArray={this.updateBoxesArray}
       resetTrigger={this.state.resetTrigger}
       completeTurn={this.completeTurn}
       />)
@@ -188,7 +183,7 @@ createBoxGrid = () => {
         <h2>Current Player: {this.state.playerTurn}</h2>
         {this.createBoxGrid()}
         <div className="buttonRow">
-          <button className="resetButton" onClick={this.refreshGame}>Reset Game</button>
+          <button className="resetButton" onClick={this.refreshGame}>New Game</button>
         </div>
       </div>
     );
